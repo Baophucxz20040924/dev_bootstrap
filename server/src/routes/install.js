@@ -71,6 +71,7 @@ router.get('/:slug/preview.json', async (req, res) => {
       default: meta.default ?? '',
     })),
     missing,
+    baseUrl: process.env.PUBLIC_BASE_URL || `${req.protocol}://${req.get('host')}`,
     bash: resolved.length ? generateBash(payload) : '',
     powershell: resolved.length ? generatePowershell(payload) : '',
   });

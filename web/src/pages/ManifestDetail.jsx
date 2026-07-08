@@ -68,7 +68,9 @@ export default function ManifestDetail() {
   // maintenance for everyone except admin.
   const canSeeCommands = loggedIn && (!maintenance || isAdmin);
 
-  const origin = window.location.origin;
+  // Prefer the backend's PUBLIC_BASE_URL (correct host:port for install), fall
+  // back to current origin only if the preview isn't loaded yet.
+  const origin = preview?.baseUrl || window.location.origin;
   const cmdBash = `curl -fsSL ${origin}/install/${slug} | bash`;
   const cmdPs = `irm ${origin}/install/${slug}/powershell | iex`;
   const copy = (text, tag) => {
