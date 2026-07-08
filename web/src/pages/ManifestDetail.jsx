@@ -4,6 +4,23 @@ import { api } from '../api.js';
 import { useAuth } from '../auth.jsx';
 import Markdown from '../components/Markdown.jsx';
 
+// Fallback copy for HTTP-LAN (no navigator.clipboard): select a temp textarea
+// and use the legacy execCommand('copy').
+function fallbackCopy(text, done) {
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    done();
+  } catch { /* ignore */ }
+}
+
 export default function ManifestDetail() {
   const { slug } = useParams();
   const { user, isAdmin } = useAuth();
@@ -74,9 +91,14 @@ export default function ManifestDetail() {
   const cmdBash = `curl -fsSL ${origin}/install/${slug} | bash`;
   const cmdPs = `irm ${origin}/install/${slug}/powershell | iex`;
   const copy = (text, tag) => {
-    navigator.clipboard.writeText(text);
-    setCopied(tag);
-    setTimeout(() => setCopied(''), 1500);
+    const done = () => { setCopied(tag); setTimeout(() => setCopied(''), 1500); };
+    // navigator.clipboard chỉ hoạt động trên HTTPS/localhost. Trên HTTP-LAN
+    // nó undefined nên fallback sang execCommand qua một textarea tạm.
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+    } else {
+      fallbackCopy(text, done);
+    }
   };
   const scriptText = preview ? (flavor === 'bash' ? preview.bash : preview.powershell) : '';
 
