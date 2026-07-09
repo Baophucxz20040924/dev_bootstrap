@@ -47,7 +47,70 @@ function psQuote(s) {
   return `'${String(s).replace(/'/g, "''")}'`;
 }
 
-function buildScript(entries) {
+// Escape for a single-quoted bash literal.
+function shQuote(s) {
+  return `'${String(s).replace(/'/g, `'\\''`)}'`;
+}
+
+function buildBash(entries) {
+  const names = entries.map((e) => `  ${shQuote(e.name)}`).join('\n');
+  const cmds = entries.map((e) => `  ${shQuote(e.command)}`).join('\n');
+  const profiles = entries.map((e) => `  ${shQuote(e.profileHint)}`).join('\n');
+
+  return `#!/usr/bin/env bash
+# Auto-generated AWS SSM DB connection launcher
+set -euo pipefail
+
+names=(
+${names}
+)
+cmds=(
+${cmds}
+)
+profiles=(
+${profiles}
+)
+
+echo ''
+echo 'Chon connection DB:'
+for i in "\${!names[@]}"; do
+  hint=''
+  if [ -n "\${profiles[$i]}" ]; then hint=" (profile goi y: \${profiles[$i]})"; fi
+  printf '  [%d] %s%s\\n' "$((i + 1))" "\${names[$i]}" "$hint"
+done
+echo ''
+
+read -r -p 'Nhap so thu tu: ' sel </dev/tty
+if ! [[ "$sel" =~ ^[0-9]+$ ]] || [ "$sel" -lt 1 ] || [ "$sel" -gt "\${#names[@]}" ]; then
+  echo 'Lua chon khong hop le.' >&2
+  exit 1
+fi
+idx=$((sel - 1))
+
+hintProfile="\${profiles[$idx]}"
+if [ -n "$hintProfile" ]; then
+  read -r -p "Nhap AWS_PROFILE [$hintProfile]: " profile </dev/tty
+else
+  read -r -p 'Nhap AWS_PROFILE: ' profile </dev/tty
+fi
+if [ -z "$profile" ]; then profile="$hintProfile"; fi
+if [ -z "$profile" ]; then
+  echo 'Chua nhap AWS_PROFILE.' >&2
+  exit 1
+fi
+
+export AWS_PROFILE="$profile"
+echo ''
+echo "=> AWS_PROFILE = $profile"
+echo "=> \${names[$idx]}"
+echo "=> \${cmds[$idx]}"
+echo ''
+
+eval "\${cmds[$idx]}"
+`;
+}
+
+function buildPowershell(entries) {
   const items = entries
     .map(
       (e) =>
@@ -100,17 +163,23 @@ Invoke-Expression $conn.Command
 `;
 }
 
-router.get('/', (_req, res) => {
+function serve(flavor, res) {
   if (!fs.existsSync(DB_FILE)) {
     return res.status(404).type('text/plain').send('# DB_SSM.txt not found\n');
   }
-  const text = fs.readFileSync(DB_FILE, 'utf8');
-  const entries = parseConnections(text);
+  const entries = parseConnections(fs.readFileSync(DB_FILE, 'utf8'));
   if (!entries.length) {
     return res.status(422).type('text/plain').send('# no connections parsed from DB_SSM.txt\n');
   }
-  res.type('text/plain').send(buildScript(entries));
-});
+  const script = flavor === 'powershell' ? buildPowershell(entries) : buildBash(entries);
+  res.type('text/plain').send(script);
+}
+
+// Default = bash (curl ... | bash). PowerShell served explicitly.
+router.get('/', (_req, res) => serve('bash', res));
+router.get('/bash', (_req, res) => serve('bash', res));
+router.get('/powershell', (_req, res) => serve('powershell', res));
+router.get('/windows', (_req, res) => serve('powershell', res));
 
 // JSON view for debugging / the web UI.
 router.get('/list.json', (_req, res) => {

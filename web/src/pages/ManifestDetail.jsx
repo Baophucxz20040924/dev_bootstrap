@@ -93,7 +93,7 @@ export default function ManifestDetail() {
     ? `curl -fsSL ${origin}${item.installPath} | bash`
     : `curl -fsSL ${origin}/install/${slug} | bash`;
   const cmdPs = custom
-    ? `irm ${origin}${item.installPath} | iex`
+    ? `irm ${origin}${item.installPath}/powershell | iex`
     : `irm ${origin}/install/${slug}/powershell | iex`;
   const copy = (text, tag) => {
     const done = () => { setCopied(tag); setTimeout(() => setCopied(''), 1500); };
