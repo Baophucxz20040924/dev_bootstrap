@@ -21,19 +21,20 @@ export function manifestRouter(Model) {
   });
 
   router.post('/', authRequired, requireRole('admin'), async (req, res) => {
-    const { slug, name, description, guide, version, steps, enabled, allowedRoles } = req.body || {};
+    const { slug, name, description, guide, version, steps, enabled, allowedRoles, installPath } = req.body || {};
     if (!slug || !name) return res.status(400).json({ error: 'slug and name required' });
     const exists = await Model.findOne({ slug: slug.toLowerCase() });
     if (exists) return res.status(409).json({ error: 'slug already exists' });
-    const item = await Model.create({ slug, name, description, guide, version, steps, enabled, allowedRoles });
+    const item = await Model.create({ slug, name, description, guide, version, steps, enabled, allowedRoles, installPath });
     res.status(201).json(item);
   });
 
   router.put('/:slug', authRequired, requireRole('admin'), async (req, res) => {
-    const { name, description, guide, version, steps, enabled, allowedRoles } = req.body || {};
+    const { name, description, guide, version, steps, enabled, allowedRoles, installPath } = req.body || {};
     const update = { name, description, guide, version, steps };
     if (enabled !== undefined) update.enabled = enabled;
     if (allowedRoles !== undefined) update.allowedRoles = allowedRoles;
+    if (installPath !== undefined) update.installPath = installPath;
     const item = await Model.findOneAndUpdate({ slug: req.params.slug.toLowerCase() }, update, { new: true });
     if (!item) return res.status(404).json({ error: 'not found' });
     res.json(item);

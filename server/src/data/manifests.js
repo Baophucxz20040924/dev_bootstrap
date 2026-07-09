@@ -64,4 +64,21 @@ Hỏi Claude về logs/traces/metrics — nó sẽ truy vấn SigNoz qua MCP.`,
     allowedRoles: ['devops'],
     steps: [step('config/devsecops')],
   },
+  {
+    slug: 'db-ssm',
+    name: 'DB SSM Connect',
+    description: 'Mở kết nối DB qua AWS SSM: chọn connection, nhập AWS_PROFILE rồi tự chạy lệnh port-forward.',
+    installPath: '/db',
+    guide: `# Cách dùng
+1. Copy lệnh PowerShell ở trên và chạy trong terminal.
+2. Chọn số thứ tự connection DB muốn mở.
+3. Nhập \`AWS_PROFILE\` (nếu connection có gợi ý profile, Enter để dùng mặc định).
+4. Script set \`AWS_PROFILE\` rồi tự chạy lệnh \`aws ssm start-session\` port-forward.
+
+## Lưu ý
+- Danh sách connection đọc trực tiếp từ \`server/bin/DB_SSM.txt\` mỗi lần chạy — sửa file đó để thêm/bớt.
+- Cần cài sẵn AWS CLI + Session Manager plugin.`,
+    allowedRoles: ['dev', 'devops'],
+    steps: [],
+  },
 ];

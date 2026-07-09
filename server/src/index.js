@@ -10,6 +10,7 @@ import moduleRoutes from './routes/modules.js';
 import userRoutes from './routes/users.js';
 import installRoutes from './routes/install.js';
 import binRoutes from './routes/bin.js';
+import dbRoutes from './routes/db.js';
 import { manifestRouter } from './routes/manifestRouter.js';
 
 const app = express();
@@ -36,6 +37,9 @@ app.use('/install', installRoutes);
 
 // Hosted binaries (e.g. the devsecops CLI) that install scripts download.
 app.use('/bin', binRoutes);
+
+// Interactive AWS SSM DB connection launcher (irm http://host/db | iex)
+app.use('/db', dbRoutes);
 
 // 404 + error handlers
 app.use((req, res) => res.status(404).json({ error: 'route not found', path: req.url }));

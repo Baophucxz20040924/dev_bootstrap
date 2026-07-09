@@ -88,8 +88,13 @@ export default function ManifestDetail() {
   // Prefer the backend's PUBLIC_BASE_URL (correct host:port for install), fall
   // back to current origin only if the preview isn't loaded yet.
   const origin = preview?.baseUrl || window.location.origin;
-  const cmdBash = `curl -fsSL ${origin}/install/${slug} | bash`;
-  const cmdPs = `irm ${origin}/install/${slug}/powershell | iex`;
+  const custom = !!item.installPath;
+  const cmdBash = custom
+    ? `curl -fsSL ${origin}${item.installPath} | bash`
+    : `curl -fsSL ${origin}/install/${slug} | bash`;
+  const cmdPs = custom
+    ? `irm ${origin}${item.installPath} | iex`
+    : `irm ${origin}/install/${slug}/powershell | iex`;
   const copy = (text, tag) => {
     const done = () => { setCopied(tag); setTimeout(() => setCopied(''), 1500); };
     // navigator.clipboard chỉ hoạt động trên HTTPS/localhost. Trên HTTP-LAN
@@ -219,7 +224,7 @@ export default function ManifestDetail() {
         )}
       </div>
 
-      {canSeeCommands && preview?.env?.length > 0 && (
+      {canSeeCommands && !custom && preview?.env?.length > 0 && (
         <div className="card">
           <h3>Values you'll be asked for</h3>
           <p className="muted" style={{ fontSize: 13 }}>
@@ -243,7 +248,7 @@ export default function ManifestDetail() {
         </div>
       )}
 
-      {canSeeCommands && (
+      {canSeeCommands && !custom && (
         <div className="card">
           <div className="flex-between">
             <h3>Steps ({item.steps.length})</h3>
@@ -286,7 +291,7 @@ export default function ManifestDetail() {
         </div>
       )}
 
-      {canSeeCommands && (
+      {canSeeCommands && !custom && (
         <div className="card">
           <div className="flex-between">
             <h3>Generated script</h3>

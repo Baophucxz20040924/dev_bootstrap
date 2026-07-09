@@ -21,6 +21,9 @@ const projectSchema = new mongoose.Schema(
     // Role được xem project. devops/admin luôn thấy hết; field này quyết định dev.
     allowedRoles: { type: [String], default: ['dev', 'devops'] },
     version: { type: String, default: '1.0.0' },
+    // Nếu set (vd "/db"), project này dùng lệnh one-line tuỳ biến trỏ tới path
+    // này thay cho hệ thống module/steps.
+    installPath: { type: String, default: '' },
     steps: { type: [manifestStepSchema], default: [] },
   },
   { timestamps: true }

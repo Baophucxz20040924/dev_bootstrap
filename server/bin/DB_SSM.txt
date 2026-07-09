@@ -1,0 +1,40 @@
+UAT Biz 
+aws ssm start-session --region us-west-2 --target i-0e7a5d5684a091acc --document-name AWS-StartPortForwardingSessionToRemoteHost --parameters host="core-service-uat-bizbone-db.cloaqgkq8wj5.us-west-2.rds.amazonaws.com",portNumber="5432",localPortNumber="9999"
+arn:aws:iam::730335444329:role/ssm-cross-account-uat
+
+QA 
+aws ssm start-session --region ap-southeast-1 --target i-0154ad92387c90672 --document-name AWS-StartPortForwardingSessionToRemoteHost --parameters host="core-service-qa-db.cppmhlz1hng4.ap-southeast-1.rds.amazonaws.com",portNumber="5432",localPortNumber="9999"
+
+Bizbone Prod 
+aws ssm start-session --region us-east-1 --target i-0ed96cc34100298b2 --document-name AWS-StartPortForwardingSessionToRemoteHost --parameters host="core-service-prod-db.cv6ccig0yea9.us-east-1.rds.amazonaws.com",portNumber="5432",localPortNumber="9999"
+
+UAT MLMC 
+aws ssm start-session --region ap-southeast-1 --target i-0fa3145cfde6c8433 --document-name AWS-StartPortForwardingSessionToRemoteHost --parameters host="core-service-uat-db.c7y0euoawa0y.ap-southeast-1.rds.amazonaws.com",portNumber="5432",localPortNumber="9999"
+
+MLMC PROD 
+aws ssm start-session --region ap-southeast-1 --target i-0d29fd4161d012487 --document-name AWS-StartPortForwardingSessionToRemoteHost --parameters host="core-service-prod-db.cdig804q0jk6.ap-southeast-1.rds.amazonaws.com",portNumber="5432",localPortNumber="9999"
+
+DEV VIZERP
+aws ssm start-session --region ap-southeast-1 --target i-035e91ba44631905c --document-name AWS-StartPortForwardingSessionToRemoteHost --parameters host="account-service-dev-db-aurora.cluster-ctbxpclciepb.ap-southeast-1.rds.amazonaws.com",portNumber="5432",localPortNumber="9999"
+
+PROD DH
+aws ssm start-session --region us-west-2 --target i-0c316d5d1cddce5ee --document-name AWS-StartPortForwardingSessionToRemoteHost --parameters host="api-service-qa-db.cadc39zh5hiz.us-west-2.rds.amazonaws.com",portNumber="5432",localPortNumber="9999"
+
+UAT Demo
+aws ssm start-session --region ap-southeast-1 --target i-09f7344cf53b5fce8 --document-name AWS-StartPortForwardingSessionToRemoteHost --parameters host="account-service-uat-db.cul9nalxscxk.ap-southeast-1.rds.amazonaws.com",portNumber="5432",localPortNumber="9999"
+
+UAT DOH 
+aws ssm start-session --region us-west-2 --target i-02efcb1411c1c6530 --document-name AWS-StartPortForwardingSessionToRemoteHost --parameters host="core-service-uat-db.cfo8uumi2uh9.us-west-2.rds.amazonaws.com",portNumber="5432",localPortNumber="9999"
+
+STAG DOH 
+aws ssm start-session --region us-west-2 --target i-077f3dc3f9af4ac08 --document-name AWS-StartPortForwardingSessionToRemoteHost --parameters host="core-service-stag-db.cdya2ww8ytdo.us-west-2.rds.amazonaws.com",portNumber="5432",localPortNumber="9999"
+
+STAGE BIZBONE 
+aws ssm start-session --region us-east-1 --target i-00e903ba82aae24e2 --document-name AWS-StartPortForwardingSessionToRemoteHost --parameters host="core-service-stag-db.cunc8yq8wo8p.us-east-1.rds.amazonaws.com",portNumber="5432",localPortNumber="9999"
+
+DCD DEV 
+aws ssm start-session --region us-west-2 --target i-06c00185238248eae --document-name AWS-StartPortForwardingSessionToRemoteHost --parameters host="vizdcd-dev-db.cbnsxod8v0dv.us-west-2.rds.amazonaws.com",portNumber="5432",localPortNumber="9999"
+
+
+
+
